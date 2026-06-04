@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100">
+  <title>XSS via foreignObject</title>
+  <foreignObject width="200" height="100">
+    <body xmlns="http://www.w3.org/1999/xhtml">
+      <script>alert('xss-foreignObject')</script>
+    </body>
+  </foreignObject>
+</svg>

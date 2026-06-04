@@ -1,0 +1,10 @@
+vendor/
+node_modules/
+tests/coverage/
+playwright-report/
+playwright-visual-report/
+test-results/
+.phpunit.cache/
+*.zip
+.phpunit.result.cache
+.phpunit.result.cache

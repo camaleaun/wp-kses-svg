@@ -1,0 +1,60 @@
+name: Release
+
+on:
+  push:
+    tags: ['[0-9]*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          tools: composer
+
+      - name: Build plugin zip
+        id: build
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          mkdir -p /tmp/build
+
+          git archive HEAD --prefix=wp-kses-svg/ | tar xf - -C /tmp/build/
+
+          git -C lib/selfdirectory archive HEAD \
+            --prefix=wp-kses-svg/lib/selfdirectory/ \
+            -- class-selfdirectory.php \
+            | tar xf - -C /tmp/build/
+
+          cp composer.json composer.lock /tmp/build/wp-kses-svg/
+          composer install --no-dev --no-interaction --prefer-dist \
+            --working-dir=/tmp/build/wp-kses-svg
+          rm /tmp/build/wp-kses-svg/composer.json /tmp/build/wp-kses-svg/composer.lock
+
+          cd /tmp/build && zip -r "wp-kses-svg.${tag}.zip" wp-kses-svg
+          echo "zip=/tmp/build/wp-kses-svg.${tag}.zip" >> "$GITHUB_OUTPUT"
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag="${GITHUB_REF_NAME}"
+
+          FEAT_SHA=$(git log --format="%H %s" | awk '/^[0-9a-f]+ feat:/{print $1; exit}')
+          TITLE=$(git log --format="%s" -n 1 "$FEAT_SHA" | sed 's/^feat: //')
+          BODY=$(git log --format="%B" -n 1 "$FEAT_SHA" | tail -n +3)
+
+          gh release create "$tag" \
+            --title "$TITLE" \
+            --notes "$BODY" \
+            --verify-tag \
+            "${{ steps.build.outputs.zip }}"

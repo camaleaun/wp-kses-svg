@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <rect fill="url(https://evil.com/track.svg)" width="100" height="100"/>
+  <rect filter="url(https://evil.com/filter.svg)" width="100" height="100"/>
+  <rect clip-path="url(https://evil.com/clip.svg)" width="100" height="100"/>
+  <rect mask="url(https://evil.com/mask.svg)" width="100" height="100"/>
+</svg>

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <a href="java&#9;script:alert(1)"><text x="10" y="20">tab bypass</text></a>
+  <a href="java&#10;script:alert(1)"><text x="10" y="40">lf bypass</text></a>
+  <a href="java&#13;script:alert(1)"><text x="10" y="60">cr bypass</text></a>
+</svg>
